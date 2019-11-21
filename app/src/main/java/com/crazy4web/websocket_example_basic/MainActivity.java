@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import okhttp3.OkHttpClient;
@@ -18,10 +20,10 @@ import okhttp3.WebSocketListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button button;
+    private Button button, send;
     private TextView output;
     public OkHttpClient okHttpClient;
-    TextInputLayout textInputLayout;
+    public EditText editText;
 
     private final class echoWebsocketlistener extends WebSocketListener{
         private static final int Closure_status=1000;
@@ -30,18 +32,30 @@ public class MainActivity extends AppCompatActivity {
         public void onOpen(final WebSocket webSocket, Response response) {
             super.onOpen(webSocket, response);
 
-            webSocket.send("Hello, my name is Girik");
-            webSocket.send("How are you?");
 
-            webSocket.send("good");
+            webSocket.send("hey there");
 
+            send.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+
+
+
+                    if (editText.getText().toString()!=null) {
+                        webSocket.send(editText.getText().toString());
+                    }
+
+                }
+            });
 
         }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
 
-            output("Receiving " + text);
+            output("Receiving :" + text);
+            editText.setText("");
         }
 
         @Override
@@ -68,24 +82,15 @@ public class MainActivity extends AppCompatActivity {
         button = findViewById(R.id.start);
         output = findViewById(R.id.output);
         okHttpClient = new OkHttpClient();
-        textInputLayout = findViewById(R.id.message);
-
-        textInputLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-
-
-            }
-        });
-
+        editText = findViewById(R.id.edittext);
+        send = findViewById(R.id.send);
 
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                start();
+                        start();
             }
         });
 
@@ -96,13 +101,7 @@ public class MainActivity extends AppCompatActivity {
         Request request = new Request.Builder().url("ws://echo.websocket.org").build();
         echoWebsocketlistener listener = new echoWebsocketlistener();
         final WebSocket ws = okHttpClient.newWebSocket(request, listener);
-        textInputLayout = findViewById(R.id.message);
 
-         ws.send("hello");
-
-
-
-//        okHttpClient.dispatcher().executorService().shutdown();
     }
 
     private void output(final String txt) {
@@ -111,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 Log.d("output",output.getText().toString() );
                 Log.d("txt",txt);
+
                 output.setText(output.getText().toString() + "\n\n" + txt);
+
             }
         });
     }
