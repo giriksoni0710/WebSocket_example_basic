@@ -17,6 +17,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView output;
     public OkHttpClient okHttpClient;
     public EditText editText;
+
 
     private final class echoWebsocketlistener extends WebSocketListener{
         private static final int Closure_status=1000;
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             webSocket.send("hey there");
-
             send.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             output("Receiving :" + text);
             editText.setText("");
         }
+
 
         @Override
         public void onClosing(WebSocket webSocket, int code, String reason) {
